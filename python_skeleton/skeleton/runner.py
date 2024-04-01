@@ -22,6 +22,7 @@ class Runner():
         '''
         Generator for incoming messages from the engine.
         '''
+
         while True:
             packet = self.socketfile.readline().strip().split(' ')
             if not packet:

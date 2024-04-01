@@ -1,5 +1,4 @@
 '''
-6.176 MIT POKERBOTS GAME ENGINE
 DO NOT REMOVE, RENAME, OR EDIT THIS FILE
 '''
 from collections import namedtuple
@@ -15,6 +14,7 @@ import os
 
 sys.path.append(os.getcwd())
 from config import *
+
 
 FoldAction = namedtuple('FoldAction', [])
 CallAction = namedtuple('CallAction', [])
@@ -318,7 +318,7 @@ class Game():
     '''
 
     def __init__(self):
-        self.log = ['6.176 MIT Pokerbots - ' + PLAYER_1_NAME + ' vs ' + PLAYER_2_NAME]
+        self.log = ['HUSKY HOLD`EM - ' + PLAYER_1_NAME + ' vs ' + PLAYER_2_NAME]
         self.player_messages = [[], []]
 
     def log_round_state(self, players, round_state):
@@ -392,8 +392,6 @@ class Game():
         Runs one round of poker.
         '''
 
-        # RIVER OF BLOOD VARIANT ENTAILS THAT CARDS MAY CONTINUE TO BE DEALT PAST THE RIVER UNTIL A BLACK CARD IS DEALT
-
         deck = eval7.Deck()
         deck.shuffle()
         hands = [deck.deal(2), deck.deal(2)]
@@ -401,11 +399,6 @@ class Game():
         # eval7 card suits are defined as ('c', 'd', 'h', 's')
         
         FINAL_STREET = 5 
-        while deck.cards[FINAL_STREET-1].suit == 1 or deck.cards[FINAL_STREET-1].suit == 2:
-            FINAL_STREET += 1
-        
-        if FINAL_STREET > 48:
-            FINAL_STREET = 48
 
         pips = [SMALL_BLIND, BIG_BLIND]
         stacks = [STARTING_STACK - SMALL_BLIND, STARTING_STACK - BIG_BLIND]
@@ -427,15 +420,19 @@ class Game():
         '''
         Runs one game of poker.
         '''
-        print('   __  _____________  ___       __           __        __    ')
-        print('  /  |/  /  _/_  __/ / _ \\___  / /_____ ____/ /  ___  / /____')
-        print(' / /|_/ // /  / /   / ___/ _ \\/  \'_/ -_) __/ _ \\/ _ \\/ __(_-<')
-        print('/_/  /_/___/ /_/   /_/   \\___/_/\\_\\\\__/_/ /_.__/\\___/\\__/___/')
+        global SMALL_BLIND, BIG_BLIND
+        print(" _   _           _            _   _       _     _ _ ")
+        print("| | | |_   _ ___| | ___   _  | | | | ___ | | __| ( ) ___ _ __ ___ ")
+        print("| |_| | | | / __| |/ / | | | | |_| |/ _ \\| |/ _` |/ / _ \\ '_ ` _ \\ ")
+        print("|  _  | |_| \\__ \\   <| |_| | |  _  | (_) | | (_| | |  __/ | | | | | ")
+        print("|_| |_|\\__,_|___/_|\\_\\\\__, | |_| |_|\\___/|_|\\__,_|  \\___|_| |_| |_| ")
+        print("                      |___/")
+
         print()
         print('Starting the Pokerbots engine...')
         players = [
             Player(PLAYER_1_NAME, PLAYER_1_PATH),
-            Player(PLAYER_2_NAME, PLAYER_2_PATH)
+            Player(PLAYER_2_NAME, PLAYER_2_PATH),
         ]
         for player in players:
             player.build()
@@ -443,6 +440,14 @@ class Game():
         for round_num in range(1, NUM_ROUNDS + 1):
             self.log.append('')
             self.log.append('Round #' + str(round_num) + STATUS(players))
+            if round_num % BLIND_INCREASE_INTERVAL == 0 and round_num != 0 and round_num != NUM_ROUNDS:
+                # Modify the values of SMALL_BLIND and BIG_BLIND
+                if(SMALL_BLIND == 10):
+                    BIG_BLIND += 30
+                    SMALL_BLIND = 25
+                else:
+                    BIG_BLIND += 50
+                    SMALL_BLIND += 25
             self.run_round(players)
             players = players[::-1]
         self.log.append('')
